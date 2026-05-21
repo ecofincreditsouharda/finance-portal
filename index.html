@@ -1,810 +1,701 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ECOFIN Management Workspace</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style>
-    @media print {
-      body * { visibility: hidden; }
-      #printable-receipt-area, #printable-receipt-area * { visibility: visible; }
-      #printable-receipt-area { position: absolute; left: 0; top: 0; width: 100%; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECOFIN Core v3.0 Framework Enterprise Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .nav-active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #f59e0b;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800">
+<body class="bg-gray-100 font-sans text-gray-800 antialiased">
 
-  <div id="login-frame" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
-    <div class="bg-white p-8 rounded-xl shadow-2xl w-96 max-w-sm border border-slate-100">
-      <div class="flex justify-center mb-6">
-        <div class="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center text-white font-black text-xl shadow-md">E</div>
-      </div>
-      <h2 class="text-xl font-bold text-center text-slate-900 mb-2">ECOFIN Gateway Login</h2>
-      <p class="text-xs text-slate-400 text-center mb-6">Access restricted to authorized institutional managers</p>
-      <form onsubmit="executeAuthorizationGate(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 tracking-wider mb-1">Username</label>
-          <input type="text" id="username-val" required class="w-full px-3 py-2 border border-slate-200 rounded focus:outline-amber-500">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 tracking-wider mb-1">Password</label>
-          <input type="password" id="password-val" required class="w-full px-3 py-2 border border-slate-200 rounded focus:outline-amber-500">
-        </div>
-        <button type="submit" class="w-full bg-slate-900 text-white font-medium py-2 rounded hover:bg-slate-800 transition shadow">Verify Identity</button>
-      </form>
+    <div id="app-container" class="flex min-h-screen">
+        
+        <aside class="w-64 bg-slate-900 text-white flex flex-col fixed inset-y-0 left-0 z-20 shadow-xl transition-all duration-300">
+            <div class="h-20 flex items-center px-6 bg-slate-950 border-b border-slate-800">
+                <i class="fa-solid fa-building-columns text-amber-500 text-2xl mr-3"></i>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wide">ECOFIN CORE</h1>
+                    <span class="text-xs text-slate-400 font-medium">Enterprise Edition v3.0</span>
+                </div>
+            </div>
+            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+                <button onclick="switchTab('tab-search')" id="btn-tab-search" class="nav-link w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition nav-active">
+                    <i class="fa-solid fa-magnifying-glass text-amber-500 w-5 mr-3 text-base"></i> 360° Global Search
+                </button>
+                <button onclick="switchTab('tab-membership')" id="btn-tab-membership" class="nav-link w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fa-solid fa-user-plus text-amber-500 w-5 mr-3 text-base"></i> Membership Management
+                </button>
+                <button onclick="switchTab('tab-savings')" id="btn-tab-savings" class="nav-link w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fa-solid fa-money-bill-transfer text-amber-500 w-5 mr-3 text-base"></i> Share & Savings Trx
+                </button>
+                <button onclick="switchTab('tab-bank-master')" id="btn-tab-bank-master" class="nav-link w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fa-solid fa-wallet text-amber-500 w-5 mr-3 text-base"></i> Society Bank Accounts
+                </button>
+                <button onclick="switchTab('tab-loans')" id="btn-tab-loans" class="nav-link w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fa-solid fa-hand-holding-dollar text-amber-500 w-5 mr-3 text-base"></i> Loan & EMI Matrix
+                </button>
+                <button onclick="switchTab('tab-fd')" id="btn-tab-fd" class="nav-link w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fa-solid fa-piggy-bank text-amber-500 w-5 mr-3 text-base"></i> Fixed Deposits (FD)
+                </button>
+                <button onclick="switchTab('tab-ledger')" id="btn-tab-ledger" class="nav-link w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fa-solid fa-calculator text-amber-500 w-5 mr-3 text-base"></i> General Ledger & Audit
+                </button>
+            </nav>
+            <div class="p-4 bg-slate-950 border-t border-slate-800 flex items-center">
+                <div class="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center font-bold text-slate-950">AD</div>
+                <div class="ml-3">
+                    <p class="text-sm font-semibold text-slate-200">System Administrator</p>
+                    <span class="text-xs text-green-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-green-400 mr-1.5 animate-pulse"></span>Online / Secure</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 pl-64 bg-slate-50 min-h-screen flex flex-col">
+            
+            <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-10 shadow-xs">
+                <div class="flex items-center">
+                    <h2 id="page-title" class="text-xl font-bold text-slate-800 tracking-tight">360-Degree Global Search</h2>
+                </div>
+                <div class="flex items-center space-y-0 space-x-4">
+                    <div class="text-right">
+                        <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Operational Node</p>
+                        <p class="text-sm font-bold text-slate-700">Central HQ Server</p>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8 flex-1 max-w-7xl w-full mx-auto">
+
+                <section id="tab-search" class="tab-content active space-y-6">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-xs">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4"><i class="fa-solid fa-magnifying-glass text-slate-400 mr-2"></i>Query Member History</h3>
+                        <div class="flex gap-4">
+                            <input type="text" id="search-member-no" placeholder="Enter Member Number (e.g., ECO00001)" class="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-hidden focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-gray-50 text-base font-medium">
+                            <button onclick="execute360Search()" class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg shadow-xs transition flex items-center">
+                                <i class="fa-solid fa-circle-notch fa-spin mr-2 hidden" id="search-spinner"></i>
+                                Fetch Profile
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="search-results" class="space-y-6 hidden">
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-xs">
+                            <div class="border-b border-gray-100 pb-4 mb-4 flex justify-between items-center">
+                                <h4 class="text-base font-bold uppercase text-amber-600 tracking-wider">Member Details</h4>
+                                <span id="res-m-no" class="font-mono bg-slate-100 px-3 py-1 rounded text-sm font-bold text-slate-700"></span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                                <div><span class="text-slate-400 block mb-0.5">Full Name</span><strong id="res-m-name" class="text-base text-slate-800"></strong></div>
+                                <div><span class="text-slate-400 block mb-0.5">Mobile Contact</span><strong id="res-m-phone" class="text-base text-slate-800"></strong></div>
+                                <div><span class="text-slate-400 block mb-0.5">Aadhar Number</span><strong id="res-m-aadhar" class="text-base text-slate-800"></strong></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex flex-col h-96">
+                                <h4 class="font-bold text-slate-800 mb-3 flex items-center"><i class="fa-solid fa-money-bill-wave text-emerald-500 mr-2"></i>Savings Account Ledgers</h4>
+                                <div class="overflow-auto flex-1 border border-gray-100 rounded-lg bg-gray-50" id="res-savings-box"></div>
+                            </div>
+                            <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex flex-col h-96">
+                                <h4 class="font-bold text-slate-800 mb-3 flex items-center"><i class="fa-solid fa-piggy-bank text-blue-500 mr-2"></i>Fixed Deposit Contracts</h4>
+                                <div class="overflow-auto flex-1 border border-gray-100 rounded-lg bg-gray-50" id="res-fd-box"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex flex-col h-96">
+                            <h4 class="font-bold text-slate-800 mb-3 flex items-center"><i class="fa-solid fa-hand-holding-dollar text-amber-500 mr-2"></i>Active / Inactive Loan Profiles</h4>
+                            <div class="overflow-auto flex-1 border border-gray-100 rounded-lg bg-gray-50" id="res-loan-box"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tab-membership" class="tab-content space-y-6">
+                    <div class="max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                        <div class="bg-slate-900 px-6 py-4 border-b border-slate-800">
+                            <h3 class="text-white font-bold text-lg">Onboard New Society Member</h3>
+                            <p class="text-slate-400 text-xs mt-0.5">Generates automated internal tracking ID sequential structure.</p>
+                        </div>
+                        <form id="form-membership" onsubmit="submitForm(event, 'registerMember', this)" class="p-6 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Full Identity Name</label>
+                                    <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Mobile Contact No</label>
+                                    <input type="text" name="phone" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Aadhar Number Card</label>
+                                    <input type="text" name="aadhar" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">PAN Number Card</label>
+                                    <input type="text" name="pan" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Residential Street Address</label>
+                                <textarea name="address" rows="2" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50"></textarea>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg shadow-xs transition flex items-center justify-center">
+                                    <i class="fa-solid fa-circle-notch fa-spin mr-2 hidden spinner"></i> Complete Onboarding Registration
+                                </button>
+                            </div>
+                            <div class="status-msg text-sm font-semibold pt-2 text-center"></div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="tab-savings" class="tab-content space-y-6">
+                    <div class="max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                        <div class="bg-slate-900 px-6 py-4 border-b border-slate-800">
+                            <h3 class="text-white font-bold text-lg">Post Share & Savings Capital Ledger Entry</h3>
+                            <p class="text-slate-400 text-xs mt-0.5">Directly credits or debits cash balances mapping members.</p>
+                        </div>
+                        <form id="form-savings" onsubmit="submitForm(event, 'postTransaction', this)" class="p-6 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Membership Number</label>
+                                    <input type="text" name="memberNo" required onblur="fetchMemberNameInline(this.value, 'savings-member-name')" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50 font-mono">
+                                    <span id="savings-member-name" class="text-xs font-semibold block mt-1 text-slate-500"></span>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Transaction Ledger Target</label>
+                                    <select name="type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                        <option value="Share Capital Credit">Share Capital Credit (Deposit)</option>
+                                        <option value="Savings Credit">Savings Credit (Deposit)</option>
+                                        <option value="Savings Debit">Savings Debit (Withdrawal)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Amount Matrix (INR)</label>
+                                    <input type="number" step="0.01" name="amount" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50 font-bold">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Payment Instrumentation Mode</label>
+                                    <select name="mode" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                        <option value="CASH">CASH SYSTEM</option>
+                                        <option value="BANK TRANSFER">BANK TRANSFER / IMPS / NEFT</option>
+                                        <option value="CHEQUE">INSTRUMENT CHEQUE</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Operational Remarks / Narration</label>
+                                <input type="text" name="remarks" placeholder="Internal processing notes..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg shadow-xs transition flex items-center justify-center">
+                                    <i class="fa-solid fa-circle-notch fa-spin mr-2 hidden spinner"></i> Commit Capital Transaction
+                                </button>
+                            </div>
+                            <div class="status-msg text-sm font-semibold pt-2 text-center"></div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="tab-bank-master" class="tab-content space-y-6">
+                    <div class="max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                        <div class="bg-slate-900 px-6 py-4 border-b border-slate-800">
+                            <h3 class="text-white font-bold text-lg">Register Society Master Commercial Bank Account</h3>
+                            <p class="text-slate-400 text-xs mt-0.5">Maps clearing houses where institutional asset funds reside.</p>
+                        </div>
+                        <form id="form-bank" onsubmit="submitForm(event, 'addSocietyBank', this)" class="p-6 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Commercial Bank Name</label>
+                                    <input type="text" name="bankName" required placeholder="SBI, HDFC, etc." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Account Clearing Number</label>
+                                    <input type="text" name="accountNo" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50 font-mono">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">National IFSC Routing Code</label>
+                                    <input type="text" name="ifscCode" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50 font-mono uppercase">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Branch Physical Demarcation</label>
+                                    <input type="text" name="branch" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg shadow-xs transition flex items-center justify-center">
+                                    <i class="fa-solid fa-circle-notch fa-spin mr-2 hidden spinner"></i> Initialize Bank Node
+                                </button>
+                            </div>
+                            <div class="status-msg text-sm font-semibold pt-2 text-center"></div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="tab-loans" class="tab-content space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                        <div class="lg:col-span-1 bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                            <div class="bg-slate-900 px-5 py-3.5 border-b border-slate-800">
+                                <h3 class="text-white font-bold text-base">Issue Loan Asset</h3>
+                            </div>
+                            <form id="form-loans" onsubmit="submitForm(event, 'createLoan', this)" class="p-5 space-y-3.5 text-sm">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-0.5">Membership Number</label>
+                                    <input type="text" name="memberNo" required id="loan-member-input" onblur="fetchMemberNameInline(this.value, 'loan-member-name')" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-hidden bg-gray-50 font-mono">
+                                    <span id="loan-member-name" class="text-xs font-semibold block mt-1 text-slate-500"></span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase text-slate-500 mb-0.5">Principal (INR)</label>
+                                        <input type="number" name="principal" id="loan-p" required class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-hidden bg-gray-50 font-bold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase text-slate-500 mb-0.5">Interest (% p.a.)</label>
+                                        <input type="number" step="0.01" name="interestRate" id="loan-r" required class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-hidden bg-gray-50">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase text-slate-500 mb-0.5">Tenure (Months)</label>
+                                        <input type="number" name="tenure" id="loan-t" required class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-hidden bg-gray-50">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase text-slate-500 mb-0.5">Disbursal Date</label>
+                                        <input type="date" name="disbursalDate" id="loan-d" required class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-hidden bg-gray-50">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 pt-1">
+                                    <button type="button" onclick="previewEMISchedule()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-lg transition border border-gray-300">
+                                        Preview EMI
+                                    </button>
+                                    <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg shadow-xs transition flex items-center justify-center">
+                                        <i class="fa-solid fa-circle-notch fa-spin mr-2 hidden spinner"></i> Disburse Asset
+                                    </button>
+                                </div>
+                                <div class="status-msg text-xs font-semibold pt-1 text-center"></div>
+                            </form>
+                        </div>
+                        
+                        <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                            <div class="bg-slate-900 px-5 py-3.5 border-b border-slate-800">
+                                <h3 class="text-white font-bold text-base">Post Inward EMI Amortization Payment</h3>
+                            </div>
+                            <form id="form-emi" onsubmit="submitForm(event, 'payEmi', this)" class="p-5 space-y-3.5 text-sm">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase text-slate-500 mb-0.5">Loan Profile Account ID</label>
+                                        <input type="text" name="loanNo" required class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-hidden bg-gray-50 font-mono">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase text-slate-500 mb-0.5">Total Amount Collected</label>
+                                        <input type="number" step="0.01" name="amountPaid" required class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-hidden bg-gray-50 font-bold">
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg shadow-xs transition flex items-center justify-center">
+                                            <i class="fa-solid fa-circle-notch fa-spin mr-2 hidden spinner"></i> Amortize Remittance
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="status-msg text-xs font-semibold text-center"></div>
+                            </form>
+                            
+                            <div id="emi-schedule-pane" class="p-5 border-t border-gray-100 bg-gray-50 hidden">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="font-bold text-sm text-slate-700 uppercase tracking-wider">Amortization Schedule Ledger Matrix</h4>
+                                    <button onclick="printEmiMatrix()" class="px-3 py-1 bg-white border border-gray-300 hover:bg-gray-100 font-semibold text-xs rounded shadow-xs flex items-center text-slate-600">
+                                        <i class="fa-solid fa-print mr-1.5"></i> Trigger System Printout
+                                    </button>
+                                </div>
+                                <div id="emi-print-area" class="bg-white border border-gray-200 rounded-lg overflow-x-auto p-4 font-mono text-xs"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tab-fd" class="tab-content space-y-6">
+                    <div class="max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                        <div class="bg-slate-900 px-6 py-4 border-b border-slate-800">
+                            <h3 class="text-white font-bold text-lg">Underwrite New Fixed Deposit Term Contract</h3>
+                            <p class="text-slate-400 text-xs mt-0.5">Locks capital deposits at configured compound yield calculations.</p>
+                        </div>
+                        <form id="form-fd" onsubmit="submitForm(event, 'createFD', this)" class="p-6 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Membership Number</label>
+                                    <input type="text" name="memberNo" required onblur="fetchMemberNameInline(this.value, 'fd-member-name')" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50 font-mono">
+                                    <span id="fd-member-name" class="text-xs font-semibold block mt-1 text-slate-500"></span>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Principal Capital (INR)</label>
+                                    <input type="number" name="principal" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50 font-bold">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Interest (% p.a.)</label>
+                                    <input type="number" step="0.01" name="interestRate" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Term Duration (Months)</label>
+                                    <input type="number" name="termMonths" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Inception Booking Date</label>
+                                    <input type="date" name="bookingDate" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:border-amber-500 bg-gray-50">
+                                </div>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg shadow-xs transition flex items-center justify-center">
+                                    <i class="fa-solid fa-circle-notch fa-spin mr-2 hidden spinner"></i> Formulate FD Contract Certificate
+                                </button>
+                            </div>
+                            <div class="status-msg text-sm font-semibold pt-2 text-center"></div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="tab-ledger" class="tab-content space-y-6">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-xs">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">Dynamic Multi-Table General Ledger Auditing</h3>
+                                <p class="text-slate-400 text-xs">Pulls complete ledger indices across structural sheets to confirm systemic balances.</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="triggerAuditCalculation()" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-lg transition shadow-xs flex items-center">
+                                    <i class="fa-solid fa-circle-notch fa-spin mr-2 hidden" id="audit-spinner"></i> Pull Balance Ledger
+                                </button>
+                                <button onclick="printAuditReport()" class="px-4 py-2 bg-white hover:bg-gray-50 font-semibold text-sm rounded-lg border border-gray-300 text-slate-700 shadow-xs flex items-center">
+                                    <i class="fa-solid fa-print mr-1.5"></i> Print Audit
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="audit-output-pane" class="border border-gray-200 rounded-xl overflow-hidden hidden bg-white">
+                            <div id="audit-print-container" class="p-6 font-mono text-xs text-slate-900 space-y-6">
+                                </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
     </div>
-  </div>
 
-  <div id="app-workspace" class="hidden flex h-screen overflow-hidden">
-    
-    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between border-r border-slate-950">
-      <div class="p-5">
-        <div class="flex items-center gap-3 mb-8">
-          <div class="w-7 h-7 bg-amber-500 rounded font-black text-slate-900 flex items-center justify-center text-sm shadow">E</div>
-          <span class="font-bold tracking-widest text-white text-md">ECOFIN SYS</span>
-        </div>
-        <nav class="space-y-1" id="navigation-sidebar-hook">
-          <button onclick="changeActiveView('dashboard')" class="nav-el w-full text-left px-3 py-2 rounded hover:bg-slate-800 font-medium text-sm transition block text-white bg-slate-800">Dashboard Summary</button>
-          <button onclick="changeActiveView('member-reg')" class="nav-el w-full text-left px-3 py-2 rounded hover:bg-slate-800 font-medium text-sm transition block">Members Profile</button>
-          <button onclick="changeActiveView('transaction-entry')" class="nav-el w-full text-left px-3 py-2 rounded hover:bg-slate-800 font-medium text-sm transition block">Ledger Postings</button>
-          <button onclick="changeActiveView('fixed-deposits')" class="nav-el w-full text-left px-3 py-2 rounded hover:bg-slate-800 font-medium text-sm transition block">Fixed Deposits</button>
-          <button onclick="changeActiveView('loans-hub')" class="nav-el w-full text-left px-3 py-2 rounded hover:bg-slate-800 font-medium text-sm transition block">Loans & Amortization</button>
-          <button onclick="changeActiveView('emi-collection')" class="nav-el w-full text-left px-3 py-2 rounded hover:bg-slate-800 font-medium text-sm transition block">EMI Collection Desk</button>
-          <button onclick="changeActiveView('audit-ledger')" class="nav-el w-full text-left px-3 py-2 rounded hover:bg-slate-800 font-medium text-sm transition block">Audit Ledger Logs</button>
-          <button onclick="changeActiveView('admin-controls')" id="admin-nav-item" class="nav-el hidden w-full text-left px-3 py-2 rounded bg-rose-950/20 text-rose-300 border border-rose-900/30 hover:bg-rose-900/40 font-medium text-sm transition block">⚙️ Master Configurations</button>
-        </nav>
-      </div>
-      <div class="p-4 border-t border-slate-800 bg-slate-950/40 text-[10px] text-slate-500 flex justify-between">
-        <span>Session: <strong id="user-display-tag" class="text-slate-300">Staff</strong></span>
-        <span>Build 2026.2</span>
-      </div>
-    </aside>
+    <script>
+        // BACKEND APP DEPLOYMENT ENDPOINT
+        const API_GATEWAY_URL = "https://script.google.com/macros/s/AKfycbxs_BEOTc347yjpAlCwXDWtMxgT_ycuIFeCQ1pF2JWoLIqxX3fWBvr4SR-BvFsDGHSO/exec";
 
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-100">
-      <header class="bg-white border-b border-slate-200 h-14 min-h-14 px-8 flex items-center justify-between shadow-xs">
-        <h1 id="workspace-title-display" class="text-xs font-black tracking-widest text-slate-400 uppercase">Dashboard Summary</h1>
-        <button onclick="invalidateSessionLogout()" class="text-xs font-semibold px-2.5 py-1 text-rose-600 hover:bg-rose-50 border border-rose-200 rounded transition">Invalidate Token</button>
-      </header>
-
-      <div class="p-8 flex-1 overflow-y-auto" id="display-viewport-panels">
-        
-        <section id="panel-dashboard" class="viewport-panel space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-xs">
-              <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">Cataloged Corporate Members</span>
-              <span class="text-3xl font-black text-slate-900 mt-1 block" id="dash-members-count">0</span>
-            </div>
-            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-xs">
-              <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">Aggregate Treasury Balance</span>
-              <span class="text-3xl font-black text-emerald-600 mt-1 block" id="dash-treasury-balance">₹0.00</span>
-            </div>
-            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-xs">
-              <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">Active Loan Files Volume</span>
-              <span class="text-3xl font-black text-blue-600 mt-1 block" id="dash-loans-count">0</span>
-            </div>
-          </div>
-        </section>
-
-        <section id="panel-member-reg" class="viewport-panel hidden max-w-4xl bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div class="border-b border-slate-100 pb-3 mb-5">
-            <h3 class="font-bold text-slate-900 text-base">Provision New Membership Protocol</h3>
-            <p class="text-slate-400 text-xs">A sequential membership number will automatically generate on validation receipt confirmation</p>
-          </div>
-          <form id="memberRegistrationForm" onsubmit="dispatchMemberCreation(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Applicant Full Name</label>
-              <input type="text" name="ApplicantName" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Father / Spouse Legal Name</label>
-              <input type="text" name="FatherSpouseName" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Date of Birth</label>
-              <input type="date" name="DOB" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm text-slate-600">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Mobile Contact Identity</label>
-              <input type="tel" pattern="[0-9]{10}" placeholder="10 Digit Input" name="MobileNo" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div class="md:col-span-2">
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Permanent Residential Structure Address</label>
-              <textarea name="Address" rows="2" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm"></textarea>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Aadhaar National Identity Code (UIDAI)</label>
-              <input type="text" pattern="[0-9]{12}" placeholder="12 Digit Structure Identification" name="Aadhaar" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Income Tax Department PAN Identifier String</label>
-              <input type="text" name="PAN" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm uppercase">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Current Occupational Classification</label>
-              <input type="text" name="Occupation" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">System Induction Joining Date</label>
-              <input type="date" id="join-date-picker" name="JoiningDate" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm text-slate-600">
-            </div>
-            <div class="md:col-span-2 flex justify-end pt-3 border-t border-slate-100">
-              <button type="submit" class="bg-slate-900 text-white font-bold text-xs uppercase px-5 py-2 rounded shadow hover:bg-slate-800">Execute Registration</button>
-            </div>
-          </form>
-        </section>
-
-        <section id="panel-transaction-entry" class="viewport-panel hidden max-w-2xl bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div class="border-b border-slate-100 pb-3 mb-5">
-            <h3 class="font-bold text-slate-900 text-base">Log Double-Entry Transaction Ledger Row</h3>
-          </div>
-          <form id="generalLedgerTransactionForm" onsubmit="dispatchManualLedgerTransaction(event)" class="space-y-4">
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Target Account Search/Select</label>
-              <input type="text" placeholder="Type member name or number..." oninput="executeInlineMemberSearch(this.value, 'tx-member-dropdown')" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm focus:outline-amber-500">
-              <div id="tx-member-dropdown" class="bg-white border border-slate-200 max-h-36 overflow-y-auto hidden rounded mt-1 divide-y divide-slate-100 shadow-md"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Allocated Membership ID</label>
-                <input type="text" id="tx-selected-id" name="MembershipNo" readonly required class="w-full border border-slate-200 bg-slate-50 rounded px-3 py-1.5 text-sm font-mono font-bold text-amber-700">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Transaction Vector Flow</label>
-                <select name="Type" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-                  <option value="Credit">Credit (Cash Inflow/Deposit)</option>
-                  <option value="Debit">Debit (Cash Outflow/Withdrawal)</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Financial Classification Scope</label>
-                <select name="AccountType" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-                  <option value="Savings Account">Savings Account Deposit/Draw</option>
-                  <option value="Share Capital">Share Capital Contribution</option>
-                  <option value="Misc Earnings">Misc Collection Service Inflows</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Transaction Volume Sum (INR)</label>
-                <input type="number" step="0.01" name="Amount" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">UTR / Instrument Reference ID No</label>
-                <input type="text" name="UTR_Cheque" placeholder="e.g. UTR592911" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Society Realization Clearing Bank Account</label>
-                <select name="SocietyBank" id="tx-target-society-bank-selector" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm"></select>
-              </div>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Narrative Statement Remarks</label>
-              <input type="text" name="Remarks" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div class="flex justify-end pt-2">
-              <button type="submit" class="bg-slate-900 text-white font-bold text-xs uppercase px-5 py-2 rounded shadow hover:bg-slate-800">Commit Ledger Posting</button>
-            </div>
-          </form>
-        </section>
-
-        <section id="panel-fixed-deposits" class="viewport-panel hidden max-w-4xl bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div class="border-b border-slate-100 pb-3 mb-5">
-            <h3 class="font-bold text-slate-900 text-base">Provision Fixed Deposit Certificate</h3>
-          </div>
-          <form id="fdForm" onsubmit="dispatchFixedDepositCreation(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="md:col-span-2">
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Search & Map Member Target</label>
-              <input type="text" placeholder="Type member details..." oninput="executeInlineMemberSearch(this.value, 'fd-member-dropdown')" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm focus:outline-amber-500">
-              <div id="fd-member-dropdown" class="bg-white border border-slate-200 max-h-36 overflow-y-auto hidden rounded mt-1 divide-y divide-slate-100 shadow-md"></div>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Membership ID Reference Mapping</label>
-              <input type="text" id="fd-selected-id" name="MembershipNo" readonly required class="w-full border border-slate-200 bg-slate-50 rounded px-3 py-1.5 text-sm font-mono font-bold text-amber-700">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Principal Funding Sum (INR)</label>
-              <input type="number" id="fd-principal" name="FDAmount" required oninput="calculateFixedDepositYieldMaturityComponents()" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Nominal Interest Multiplier Matrix (%)</label>
-              <input type="number" step="0.01" id="fd-interest-rate" name="InterestRate" required oninput="calculateFixedDepositYieldMaturityComponents()" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Lock-In Tenure Term (Months)</label>
-              <input type="number" id="fd-tenure" name="DurationMonths" required oninput="calculateFixedDepositYieldMaturityComponents()" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Maturity Interest Dividend Value (Computed)</label>
-              <input type="number" step="0.01" id="fd-computed-interest" name="InterestAmount" readonly class="w-full border border-slate-200 bg-slate-50 rounded px-3 py-1.5 text-sm font-mono font-bold text-emerald-600">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Gross Realization Maturity Yield Value (Computed)</label>
-              <input type="number" step="0.01" id="fd-computed-maturity" name="MaturityAmount" readonly class="w-full border border-slate-200 bg-slate-50 rounded px-3 py-1.5 text-sm font-mono font-bold text-emerald-700">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Value Effective Generation Date</label>
-              <input type="date" id="fd-start-date" name="StartDate" required onchange="calculateFixedDepositYieldMaturityComponents()" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm text-slate-600">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Computed Certificate Termination Date</label>
-              <input type="date" id="fd-maturity-date" name="MaturityDate" readonly class="w-full border border-slate-200 bg-slate-50 rounded px-3 py-1.5 text-sm text-slate-600">
-            </div>
-            <div class="md:col-span-2 flex justify-end pt-3 border-t border-slate-100">
-              <button type="submit" class="bg-slate-900 text-white font-bold text-xs uppercase px-5 py-2 rounded shadow hover:bg-slate-800">Generate Fixed Deposit Account</button>
-            </div>
-          </form>
-        </section>
-
-        <section id="panel-loans-hub" class="viewport-panel hidden max-w-7xl bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div class="border-b border-slate-100 pb-3 mb-5 flex justify-between items-center">
-            <div>
-              <h3 class="font-bold text-slate-900 text-base">Amortized Loan Issuance Command Terminal</h3>
-              <p class="text-slate-400 text-xs">Dynamic computational reducing-balance interest schedule structure engine</p>
-            </div>
-            <button onclick="dispatchNativePrintFrame('printable-receipt-area')" class="bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded shadow hover:bg-blue-700 transition">Print Amortization Receipt Schedule</button>
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <form id="loanCreationForm" onsubmit="dispatchAssetFinancingLoanSanction(event)" class="lg:col-span-1 space-y-4 border-r border-slate-100 pr-4">
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Search/Select Target Debtor</label>
-                <input type="text" placeholder="Type name..." oninput="executeInlineMemberSearch(this.value, 'ln-member-dropdown')" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm focus:outline-amber-500">
-                <div id="ln-member-dropdown" class="bg-white border border-slate-200 max-h-32 overflow-y-auto hidden rounded mt-1 divide-y divide-slate-100 shadow-md"></div>
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Mapped Membership Account No</label>
-                <input type="text" id="ln-selected-id" name="MembershipNo" readonly required class="w-full border border-slate-200 bg-slate-50 rounded px-3 py-1.5 text-sm font-mono font-bold text-amber-700">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Loan Product Variant</label>
-                <select name="LoanType" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-                  <option value="Personal Loan">Personal Unsecured Loan Portfolio</option>
-                  <option value="Gold Loan">Gold Asset Backed Advancements</option>
-                  <option value="Property Mortgage">Real Estate Mortgage Asset Backing</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Interest Computation Protocol Rule</label>
-                <select id="ln-interest-type" name="InterestType" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-                  <option value="Reducing Balance">Standard Diminishing/Reducing Balance Model</option>
-                  <option value="Flat Rate">Fixed Pure Capital Flat Premium Rate</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Sanctioned Principal Capital (INR)</label>
-                <input type="number" id="ln-principal" name="LoanAmount" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Annual Interest Premium Rate (%)</label>
-                <input type="number" step="0.01" id="ln-rate" name="InterestRate" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Repayment Term Life Span (Months)</label>
-                <input type="number" id="ln-duration" name="DurationMonths" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Disbursal Commencement Value Date</label>
-                <input type="date" id="ln-start-date" name="StartDate" required class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm text-slate-600">
-              </div>
-              <div class="pt-2 grid grid-cols-2 gap-2">
-                <button type="button" onclick="executeAmortizationSimulationClientSide()" class="bg-slate-700 text-white font-bold text-[11px] uppercase py-2 rounded shadow hover:bg-slate-600">Simulate Chart</button>
-                <button type="submit" class="bg-slate-900 text-white font-bold text-[11px] uppercase py-2 rounded shadow hover:bg-slate-800">Sanction & Save</button>
-              </div>
-            </form>
-
-            <div class="lg:col-span-2">
-              <div id="printable-receipt-area" class="bg-white p-4 border border-slate-200 rounded-lg">
-                <div class="text-center mb-5 border-b border-slate-200 pb-4">
-                  <h2 class="text-lg font-black tracking-tight text-slate-900 uppercase">ECOFIN Credit Souhardha Co-Op Ledger</h2>
-                  <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Official Equal Monthly Installment (EMI) Amortization Schedule Certificate Statement</p>
-                </div>
-                <div class="grid grid-cols-2 text-[11px] gap-2 mb-4 bg-slate-50 p-3 rounded font-mono text-slate-600">
-                  <div>Projected Debtor: <span id="print-lbl-member" class="font-bold text-slate-900">-</span></div>
-                  <div>Principal Financing Volume: <span id="print-lbl-principal" class="font-bold text-slate-900">₹0.00</span></div>
-                  <div>Interest Protocol Rate: <span id="print-lbl-rate" class="font-bold text-slate-900">0.00%</span></div>
-                  <div>Tenure Life Matrix Term: <span id="print-lbl-duration" class="font-bold text-slate-900">0 Months</span></div>
-                </div>
-                <table class="w-full text-left text-[11px] border-collapse border border-slate-200">
-                  <thead>
-                    <tr class="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold font-mono">
-                      <th class="p-1.5 border border-slate-200">Instalment No</th>
-                      <th class="p-1.5 border border-slate-200">Due Date</th>
-                      <th class="p-1.5 border border-slate-200">EMI Value</th>
-                      <th class="p-1.5 border border-slate-200">Principal Component</th>
-                      <th class="p-1.5 border border-slate-200">Interest Share</th>
-                      <th class="p-1.5 border border-slate-200">Outstanding Principal</th>
-                    </tr>
-                  </thead>
-                  <tbody id="simulation-table-body" class="divide-y divide-slate-100 font-mono text-slate-600">
-                    <tr><td colspan="6" class="p-4 text-center font-sans text-slate-400 italic">No calculation simulation sequence has been run on this file dataset layer.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="panel-emi-collection" class="viewport-panel hidden max-w-4xl bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div class="border-b border-slate-100 pb-3 mb-5">
-            <h3 class="font-bold text-slate-900 text-base">EMI Payments Collection Desk</h3>
-            <p class="text-slate-400 text-xs">Select active file numbers to retrieve remaining payment parameters</p>
-          </div>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Select Active Sanctioned Loan Code Reference</label>
-              <select id="emi-loan-file-selector" onchange="retrieveSpecificLoanPendingEMISchedules(this.value)" class="w-full border border-slate-300 rounded px-3 py-1.5 text-sm font-mono"></select>
-            </div>
-            <div id="emi-payment-execution-card" class="hidden bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
-              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-200 pb-1">Next Immediate Realizable Instalment Block Parameters</h4>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 font-mono text-xs">
-                <div>Instalment Row Index: <span id="emi-lbl-index" class="font-bold text-slate-900">-</span></div>
-                <div>Target Due Date: <span id="emi-lbl-duedate" class="font-bold text-slate-900">-</span></div>
-                <div>Gross Collection Demand: <span id="emi-lbl-amount" class="font-bold text-slate-900">₹0.00</span></div>
-                <div>Principal/Interest Share: <span id="emi-lbl-split" class="font-bold text-slate-400">-/-</span></div>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Collection Clearing Bank Destination</label>
-                  <select id="emi-clearing-bank-selector" class="w-full border border-slate-300 rounded bg-white px-3 py-1.5 text-sm"></select>
-                </div>
-                <div class="flex items-end">
-                  <button onclick="commitEmiInstalmentPaymentTransactionToServer()" class="w-full bg-emerald-600 text-white text-xs font-bold uppercase py-2.5 rounded shadow hover:bg-emerald-700">Record Realization Settlement</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="panel-audit-ledger" class="viewport-panel hidden max-w-7xl bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div class="border-b border-slate-100 pb-3 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h3 class="font-bold text-slate-900 text-base">Comprehensive General Ledger Audit Trail Terminal</h3>
-              <p class="text-slate-400 text-xs">Real-time calculations for balance auditing sheets verification checks matrices</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <input type="date" id="audit-filter-from" class="border border-slate-300 rounded px-2 py-1 text-xs text-slate-600">
-              <span class="text-slate-400 text-xs">to</span>
-              <input type="date" id="audit-filter-to" class="border border-slate-300 rounded px-2 py-1 text-xs text-slate-600">
-              <button onclick="executeLedgerAuditorPipelineFilterStream()" class="bg-slate-900 text-white font-bold text-xs px-4 py-1.5 rounded shadow hover:bg-slate-800">Execute Audit Stream</button>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-mono">
-              <span class="text-[10px] font-bold uppercase tracking-wider block text-slate-400 font-sans">Gross Credit Inflows Pool</span>
-              <span class="text-2xl font-black mt-1 block" id="audit-total-credits">₹0.00</span>
-            </div>
-            <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 font-mono">
-              <span class="text-[10px] font-bold uppercase tracking-wider block text-slate-400 font-sans">Gross Debit Outflows Disbursals</span>
-              <span class="text-2xl font-black mt-1 block" id="audit-total-debits">₹0.00</span>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono">
-              <span class="text-[10px] font-bold uppercase tracking-wider block text-slate-400 font-sans">Net Retained Operational Liquidity</span>
-              <span class="text-2xl font-black mt-1 block" id="audit-net-liquidity">₹0.00</span>
-            </div>
-          </div>
-          <table class="w-full text-left text-xs border-collapse border border-slate-200">
-            <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px] font-mono">
-                <th class="p-2.5 border border-slate-200">Transaction ID</th>
-                <th class="p-2.5 border border-slate-200">Execution Date</th>
-                <th class="p-2.5 border border-slate-200">Membership ID</th>
-                <th class="p-2.5 border border-slate-200">Classification Portfolio</th>
-                <th class="p-2.5 border border-slate-200">Vector Status</th>
-                <th class="p-2.5 border border-slate-200 text-right">Volume Value</th>
-              </tr>
-            </thead>
-            <tbody id="audit-ledger-table-body" class="divide-y divide-slate-100 font-mono text-slate-700">
-              <tr><td colspan="6" class="p-4 text-center font-sans text-slate-400 italic">Configure chronological metrics pipeline timelines boundaries rules.</td></tr>
-            </tbody>
-          </table>
-        </section>
-
-        <section id="panel-admin-controls" class="viewport-panel hidden max-w-4xl bg-white p-6 rounded-xl border border-rose-200 shadow-sm">
-          <div class="border-b border-rose-100 pb-3 mb-5">
-            <h3 class="font-bold text-rose-900 text-base">Master Systems Administrative Control Dashboard</h3>
-            <p class="text-slate-400 text-xs">Provision system nodes parameters settings and add clearing accounts profiles</p>
-          </div>
-          <div class="space-y-6">
-            <form id="bankMasterAdditionForm" onsubmit="dispatchMasterBankCreation(event)" class="space-y-4 bg-slate-50 p-4 border border-slate-200 rounded-lg">
-              <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Provision New Corporate Institutional Clearing Bank Node</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Bank Entity Identity Name</label>
-                  <input type="text" name="BankName" placeholder="e.g. STATE BANK OF INDIA" required class="w-full border border-slate-300 bg-white rounded px-2.5 py-1 text-sm">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Corporate Core Account Number</label>
-                  <input type="text" name="AccountNumber" required class="w-full border border-slate-300 bg-white rounded px-2.5 py-1 text-sm">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">IFSC Identifier Core Token String</label>
-                  <input type="text" name="IFSCCode" required class="w-full border border-slate-300 bg-white rounded px-2.5 py-1 text-sm uppercase">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Corporate Branch Extension Name</label>
-                  <input type="text" name="Branch" required class="w-full border border-slate-300 bg-white rounded px-2.5 py-1 text-sm">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Opening Base Balance Liquidity Volume</label>
-                  <input type="number" step="0.01" name="OpeningBalance" required class="w-full border border-slate-300 bg-white rounded px-2.5 py-1 text-sm">
-                </div>
-              </div>
-              <div class="flex justify-end pt-2">
-                <button type="submit" class="bg-rose-900 text-white font-bold text-xs uppercase px-4 py-2 rounded shadow hover:bg-rose-800">Catalog Corporate Node</button>
-              </div>
-            </form>
-          </div>
-        </section>
-
-      </div>
-    </main>
-  </div>
-
-  <script>
-    // CRITICAL API INTEGRATION NODE: Linked safely to your deployed backend macro execution pipeline
-    const ENDPOINT_GATEWAY = "https://script.google.com/macros/s/AKfycbxs_BEOTc347yjpAlCwXDWtMxgT_ycuIFeCQ1pF2JWoLIqxX3fWBvr4SR-BvFsDGHSO/exec";
-
-    let localStateMembersCache = [];
-    let localActiveSessionToken = "";
-    let simulationCalculatedSchedulesHolder = [];
-    let activeLoanSelectedCacheRecordObj = null;
-
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('join-date-picker').value = new Date().toISOString().split('T')[0];
-      document.getElementById('fd-start-date').value = new Date().toISOString().split('T')[0];
-      document.getElementById('ln-start-date').value = new Date().toISOString().split('T')[0];
-      document.getElementById('audit-filter-to').value = new Date().toISOString().split('T')[0];
-      
-      let passDate = new Date(); passDate.setDate(passDate.getDate() - 30);
-      document.getElementById('audit-filter-from').value = passDate.toISOString().split('T')[0];
-    });
-
-    async function networkCallTransportLayer(actionKey, payloadObj) {
-      try {
-        const payloadData = { action: actionKey, data: payloadObj };
-        const stream = await fetch(ENDPOINT_GATEWAY, {
-          method: "POST",
-          mode: "cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payloadData)
-        });
-        return await stream.json();
-      } catch (err) {
-        alert("Serverless database engine link routing error occurred.");
-        return { success: false, error: err.toString() };
-      }
-    }
-
-    async function executeAuthorizationGate(e) {
-      e.preventDefault();
-      const payload = {
-        username: document.getElementById('username-val').value,
-        password: document.getElementById('password-val').value
-      };
-      const response = await networkCallTransportLayer("login", payload);
-      if(response.success) {
-        localActiveSessionToken = response.token;
-        document.getElementById('user-display-tag').innerText = response.role;
-        document.getElementById('login-frame').classList.add('hidden');
-        document.getElementById('app-workspace').classList.remove('hidden');
-        
-        if(response.role === "Admin") {
-          document.getElementById('admin-nav-item').classList.remove('hidden');
+        // TAB SWITCHING NAVIGATION MECHANISM
+        function switchTab(targetTabId) {
+            document.querySelectorAll('.tab-content').forEach(element => element.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(element => element.classList.remove('nav-active'));
+            
+            document.getElementById(targetTabId).classList.add('active');
+            const targetButtonId = 'btn-' + targetTabId;
+            if(document.getElementById(targetButtonId)) {
+                document.getElementById(targetButtonId).classList.add('nav-active');
+            }
+            
+            // Format descriptive system title text dynamically
+            const matchingTitleText = document.getElementById(targetButtonId).innerText.trim();
+            document.getElementById('page-title').innerText = matchingTitleText;
         }
-        triggerAsyncCacheRefreshSequence();
-      } else {
-        alert(response.message);
-      }
-    }
 
-    function changeActiveView(targetPanelID) {
-      document.querySelectorAll('.viewport-panel').forEach(panel => panel.classList.add('hidden'));
-      document.querySelectorAll('.nav-el').forEach(btn => btn.classList.remove('bg-slate-800', 'text-white'));
-      
-      document.getElementById('panel-' + targetPanelID).classList.remove('hidden');
-      document.getElementById('workspace-title-display').innerText = targetPanelID.replace('-', ' ') + " Interface Workspace";
-      
-      event.target.classList.add('bg-slate-800', 'text-white');
-      if(targetPanelID === 'dashboard') triggerAsyncCacheRefreshSequence();
-    }
-
-    async function triggerAsyncCacheRefreshSequence() {
-      const memRes = await networkCallTransportLayer("getMembers", {});
-      if(memRes.success) {
-        localStateMembersCache = memRes.data;
-        document.getElementById('dash-members-count').innerText = memRes.data.length;
-      }
-      const bankRes = await networkCallTransportLayer("getBanks", {});
-      if(bankRes.success) {
-        let totalCashPool = 0;
-        let selectHtml = "";
-        bankRes.data.forEach(bank => {
-          totalCashPool += parseFloat(bank.CurrentBalance) || 0;
-          selectHtml += `<option value="${bank.BankName}">${bank.BankName} [A/C: ...${bank.AccountNumber.slice(-4)}]</option>`;
-        });
-        document.getElementById('dash-treasury-balance').innerText = "₹" + totalCashPool.toLocaleString('en-IN', {minimumFractionDigits:2});
-        
-        // Push options into transaction modules context elements selectors
-        document.getElementById('tx-target-society-bank-selector').innerHTML = selectHtml;
-        document.getElementById('emi-clearing-bank-selector').innerHTML = selectHtml;
-      }
-      const loanRes = await networkCallTransportLayer("getLoans", {});
-      if(loanRes.success) {
-        document.getElementById('dash-loans-count').innerText = loanRes.data.length;
-        
-        let fileSelectorsHtml = "<option value=''>-- Select Active File Reference --</option>";
-        loanRes.data.forEach(loan => {
-          fileSelectorsHtml += `<option value="${loan.LoanNo}">${loan.LoanNo} [Member: ${loan.MembershipNo}]</option>`;
-        });
-        document.getElementById('emi-loan-file-selector').innerHTML = fileSelectorsHtml;
-      }
-    }
-
-    function executeInlineMemberSearch(queryString, targetDropdownID) {
-      const divElementContainer = document.getElementById(targetDropdownID);
-      if(!queryString) { divElementContainer.classList.add('hidden'); return; }
-      
-      const matchedArraySet = localStateMembersCache.filter(item => 
-         item.ApplicantName.toLowerCase().includes(queryString.toLowerCase()) ||
-         item.MembershipNo.toLowerCase().includes(queryString.toLowerCase())
-      );
-
-      if(matchedArraySet.length > 0) {
-        divElementContainer.innerHTML = matchedArraySet.map(m => `
-          <div onclick="bindSelectedMemberAccountFieldMapping('${m.MembershipNo}', '${m.ApplicantName}', '${targetDropdownID}')" class="p-2 hover:bg-slate-50 font-mono text-xs cursor-pointer text-slate-700">
-             <strong class="text-amber-800">${m.MembershipNo}</strong> - ${m.ApplicantName}
-          </div>
-        `).join('');
-        divElementContainer.classList.remove('hidden');
-      } else {
-        divElementContainer.classList.add('hidden');
-      }
-    }
-
-    function bindSelectedMemberAccountFieldMapping(idCode, nameString, associatedDropdownID) {
-      document.getElementById(associatedDropdownID).classList.add('hidden');
-      if(associatedDropdownID === 'tx-member-dropdown') document.getElementById('tx-selected-id').value = idCode;
-      if(associatedDropdownID === 'fd-member-dropdown') {
-        document.getElementById('fd-selected-id').value = idCode;
-        calculateFixedDepositYieldMaturityComponents();
-      }
-      if(associatedDropdownID === 'ln-member-dropdown') document.getElementById('ln-selected-id').value = idCode;
-    }
-
-    // DISPATCH SUBMISSION ACTIONS
-    async function dispatchMemberCreation(e) {
-      e.preventDefault();
-      const form = e.target;
-      const data = Object.fromEntries(new FormData(form).entries());
-      const res = await networkCallTransportLayer("addMember", data);
-      if(res.success) { alert("Execution Success. membership allocated ID: " + res.generatedID); form.reset(); triggerAsyncCacheRefreshSequence(); }
-    }
-
-    async function dispatchManualLedgerTransaction(e) {
-      e.preventDefault();
-      const form = e.target;
-      const data = Object.fromEntries(new FormData(form).entries());
-      const res = await networkCallTransportLayer("recordTransaction", data);
-      if(res.success) { alert("Transaction Row appended inside Central Ledger Archive under Reference ID: " + res.transactionID); form.reset(); triggerAsyncCacheRefreshSequence(); }
-    }
-
-    function calculateFixedDepositYieldMaturityComponents() {
-      const p = parseFloat(document.getElementById('fd-principal').value) || 0;
-      const r = parseFloat(document.getElementById('fd-interest-rate').value) || 0;
-      const m = parseInt(document.getElementById('fd-tenure').value) || 0;
-      const dateVal = document.getElementById('fd-start-date').value;
-      
-      const calculatedInterest = (p * r * (m / 12)) / 100;
-      document.getElementById('fd-computed-interest').value = calculatedInterest.toFixed(2);
-      document.getElementById('fd-computed-maturity').value = (p + calculatedInterest).toFixed(2);
-      
-      if(dateVal) {
-        let completionDateObj = new Date(dateVal);
-        completionDateObj.setMonth(completionDateObj.getMonth() + m);
-        document.getElementById('fd-maturity-date').value = completionDateObj.toISOString().split('T')[0];
-      }
-    }
-
-    async function dispatchFixedDepositCreation(e) {
-      e.preventDefault();
-      const form = e.target;
-      const data = Object.fromEntries(new FormData(form).entries());
-      const res = await networkCallTransportLayer("addFixedDeposit", data);
-      if(res.success) { alert("Fixed Deposit Certificate cataloged live: " + res.generatedID); form.reset(); triggerAsyncCacheRefreshSequence(); }
-    }
-
-    function executeAmortizationSimulationClientSide() {
-      const memberCode = document.getElementById('ln-selected-id').value || "PROSPECTIVE MEMBER";
-      const principalVal = parseFloat(document.getElementById('ln-principal').value) || 0;
-      const annualRate = parseFloat(document.getElementById('ln-rate').value) || 0;
-      const durationMonths = parseInt(document.getElementById('ln-duration').value) || 0;
-      const startDateVal = document.getElementById('ln-start-date').value;
-      const computationRule = document.getElementById('ln-interest-type').value;
-
-      if(!principalVal || !annualRate || !durationMonths || !startDateVal) { alert("Input parameters missing bounds variables mapping fields."); return; }
-      
-      document.getElementById('print-lbl-member').innerText = memberCode;
-      document.getElementById('print-lbl-principal').innerText = "₹" + principalVal.toLocaleString('en-IN');
-      document.getElementById('print-lbl-rate').innerText = annualRate.toFixed(2) + "% (" + computationRule + ")";
-      document.getElementById('print-lbl-duration').innerText = durationMonths + " Months";
-
-      let tableBodyHtml = "";
-      simulationCalculatedSchedulesHolder = [];
-      let balanceOutstanding = principalVal;
-      let emiCalculatedConstantSum = 0;
-      
-      if (computationRule === "Flat Rate") {
-         const flatMonthlyInterestShare = (principalVal * (annualRate/100)) / 12;
-         const standardPrincipalSplit = principalVal / durationMonths;
-         emiCalculatedConstantSum = standardPrincipalSplit + flatMonthlyInterestShare;
-         
-         let calendarInstant = new Date(startDateVal);
-         for(let i=1; i<=durationMonths; i++) {
-           balanceOutstanding -= standardPrincipalSplit;
-           calendarInstant.setMonth(calendarInstant.getMonth() + 1);
-           let dueDateStr = calendarInstant.toISOString().split('T')[0];
-           
-           simulationCalculatedSchedulesHolder.push({
-             EMINo: i, DueDate: dueDateStr, EMIAmount: emiCalculatedConstantSum.toFixed(2),
-             PrincipalComponent: standardPrincipalSplit.toFixed(2), InterestComponent: flatMonthlyInterestShare.toFixed(2)
-          });
-           
-           tableBodyHtml += `<tr><td class="p-1.5 border border-slate-200 font-bold">${i}</td><td class="p-1.5 border border-slate-200">${dueDateStr}</td><td class="p-1.5 border border-slate-200 font-bold">₹${emiCalculatedConstantSum.toFixed(2)}</td><td class="p-1.5 border border-slate-200 text-emerald-700">₹${standardPrincipalSplit.toFixed(2)}</td><td class="p-1.5 border border-slate-200 text-amber-700">₹${flatMonthlyInterestShare.toFixed(2)}</td><td class="p-1.5 border border-slate-200 font-bold">₹${Math.abs(balanceOutstanding).toFixed(2)}</td></tr>`;
-         }
-      } else {
-         const dynamicMonthlyFractionRate = (annualRate / 12) / 100;
-         emiCalculatedConstantSum = (principalVal * dynamicMonthlyFractionRate * Math.pow(1 + dynamicMonthlyFractionRate, durationMonths)) / (Math.pow(1 + dynamicMonthlyFractionRate, durationMonths) - 1);
-         
-         let calendarInstant = new Date(startDateVal);
-         for(let i=1; i<=durationMonths; i++) {
-           let monthlyInterestChargeShare = balanceOutstanding * dynamicMonthlyFractionRate;
-           let principalRedemptionShare = emiCalculatedConstantSum - monthlyInterestChargeShare;
-           balanceOutstanding -= principalRedemptionShare;
-           
-           calendarInstant.setMonth(calendarInstant.getMonth() + 1);
-           let dueDateStr = calendarInstant.toISOString().split('T')[0];
-           
-           simulationCalculatedSchedulesHolder.push({
-             EMINo: i, DueDate: dueDateStr, EMIAmount: emiCalculatedConstantSum.toFixed(2),
-             PrincipalComponent: principalRedemptionShare.toFixed(2), InterestComponent: monthlyInterestChargeShare.toFixed(2)
-           });
-           
-           tableBodyHtml += `<tr><td class="p-1.5 border border-slate-200 font-bold">${i}</td><td class="p-1.5 border border-slate-200">${dueDateStr}</td><td class="p-1.5 border border-slate-200 font-bold">₹${emiCalculatedConstantSum.toFixed(2)}</td><td class="p-1.5 border border-slate-200 text-emerald-700">₹${principalRedemptionShare.toFixed(2)}</td><td class="p-1.5 border border-slate-200 text-amber-700">₹${monthlyInterestChargeShare.toFixed(2)}</td><td class="p-1.5 border border-slate-200 font-bold">₹${Math.max(0, balanceOutstanding).toFixed(2)}</td></tr>`;
-         }
-      }
-      document.getElementById('simulation-table-body').innerHTML = tableBodyHtml;
-    }
-
-    async function dispatchAssetFinancingLoanSanction(e) {
-      e.preventDefault();
-      if(simulationCalculatedSchedulesHolder.length === 0) { alert("Execute simulated chart tracking projection pipelines layout prior to execution commitment steps operations."); return; }
-      
-      const form = e.target;
-      const data = Object.fromEntries(new FormData(form).entries());
-      
-      data["Schedules"] = simulationCalculatedSchedulesHolder;
-      data["TotalInterest"] = (simulationCalculatedSchedulesHolder.reduce((acc, current) => acc + parseFloat(current.InterestComponent), 0)).toFixed(2);
-      data["TotalRepayment"] = (parseFloat(data.LoanAmount) + parseFloat(data.TotalInterest)).toFixed(2);
-      data["OutstandingBalance"] = data.LoanAmount;
-      data["FirstEMIDate"] = simulationCalculatedSchedulesHolder[0].DueDate;
-      data["MaturityDate"] = simulationCalculatedSchedulesHolder[simulationCalculatedSchedulesHolder.length - 1].DueDate;
-      
-      const res = await networkCallTransportLayer("addLoan", data);
-      if(res.success) { alert("Loan Portfolio Document File Saved Successfully under Allocation Number: " + res.generatedID); form.reset(); simulationCalculatedSchedulesHolder=[]; document.getElementById('simulation-table-body').innerHTML=""; triggerAsyncCacheRefreshSequence(); }
-    }
-
-    async function retrieveSpecificLoanPendingEMISchedules(loanFileNoString) {
-      const card = document.getElementById('emi-payment-execution-card');
-      if(!loanFileNoString) { card.classList.add('hidden'); return; }
-      
-      const activeLoansSet = await networkCallTransportLayer("getLoans", {});
-      activeLoanSelectedCacheRecordObj = activeLoansSet.data.find(l => l.LoanNo === loanFileNoString);
-
-      const response = await networkCallTransportLayer("getEMISchedules", {});
-      if(response.success) {
-        const sortedPendingInstallmentRowObj = response.data
-          .filter(sch => sch.LoanNo === loanFileNoString && sch.Status === "Pending")
-          .sort((x,y) => parseInt(x.EMINo) - parseInt(y.EMINo))[0];
-          
-        if(sortedPendingInstallmentRowObj) {
-          document.getElementById('emi-lbl-index').innerText = sortedPendingInstallmentRowObj.EMINo;
-          document.getElementById('emi-lbl-duedate').innerText = sortedPendingInstallmentRowObj.DueDate.split('T')[0];
-          document.getElementById('emi-lbl-amount').innerText = "₹" + parseFloat(sortedPendingInstallmentRowObj.EMIAmount).toFixed(2);
-          document.getElementById('emi-lbl-split').innerText = "P: ₹" + sortedPendingInstallmentRowObj.PrincipalComponent + " | I: ₹" + sortedPendingInstallmentRowObj.InterestComponent;
-          
-          card.dataset.emiNo = sortedPendingInstallmentRowObj.EMINo;
-          card.dataset.emiAmt = sortedPendingInstallmentRowObj.EMIAmount;
-          card.dataset.emiPrincipal = sortedPendingInstallmentRowObj.PrincipalComponent;
-          
-          card.classList.remove('hidden');
-        } else {
-          alert("All processing steps cycles finalized or folder files references cleared metrics values layout.");
-          card.classList.add('hidden');
+        // AUTO-FETCH MEMBER NAME INLINE
+        async function fetchMemberNameInline(memberNo, labelElementId) {
+            const targetLabel = document.getElementById(labelElementId);
+            if(!memberNo || memberNo.trim().length < 3) {
+                targetLabel.innerText = "";
+                return;
+            }
+            targetLabel.className = "text-xs font-semibold block mt-1 text-slate-400";
+            targetLabel.innerText = "Searching profile index...";
+            
+            try {
+                const response = await fetch(`${API_GATEWAY_URL}?action=searchMember&memberNo=${encodeURIComponent(memberNo.trim())}`);
+                const result = await response.json();
+                if(result.status === "success" && result.data.member) {
+                    targetLabel.className = "text-xs font-semibold block mt-1 text-emerald-600";
+                    targetLabel.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Match: ${result.data.member.name}`;
+                } else {
+                    targetLabel.className = "text-xs font-semibold block mt-1 text-rose-500";
+                    targetLabel.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> No matching member code found`;
+                }
+            } catch(e) {
+                targetLabel.innerText = "";
+            }
         }
-      }
-    }
 
-    async function commitEmiInstalmentPaymentTransactionToServer() {
-      const card = document.getElementById('emi-payment-execution-card');
-      const payload = {
-        LoanNo: document.getElementById('emi-loan-file-selector').value,
-        MembershipNo: activeLoanSelectedCacheRecordObj.MembershipNo,
-        EMINo: card.dataset.emiNo,
-        EMIAmount: card.dataset.emiAmt,
-        PrincipalComponent: card.dataset.emiPrincipal,
-        SocietyBank: document.getElementById('emi-clearing-bank-selector').value
-      };
-      
-      const res = await networkCallTransportLayer("payEMI", payload);
-      if(res.success) {
-        alert("Settlement Log Entry Added. Ledger files cleared.");
-        card.classList.add('hidden');
-        document.getElementById('emi-loan-file-selector').value = "";
-        triggerAsyncCacheRefreshSequence();
-      }
-    }
+        // GLOBAL ASYNC POST TRANSMISSION SUBMITTER
+        async function submitForm(event, actionMethod, formElement) {
+            event.preventDefault();
+            const matchingButton = formElement.querySelector('button[type="submit"]');
+            const matchingSpinner = matchingButton.querySelector('.spinner');
+            const statusDiv = formElement.querySelector('.status-msg');
+            
+            matchingButton.disabled = true;
+            if(matchingSpinner) matchingSpinner.classList.remove('hidden');
+            statusDiv.className = "status-msg text-sm font-semibold pt-2 text-center text-slate-500";
+            statusDiv.innerText = "Transmitting telemetry data packages to core system database...";
 
-    async function executeLedgerAuditorPipelineFilterStream() {
-      const tableBody = document.getElementById('audit-ledger-table-body');
-      tableBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 font-bold">Querying transaction log stream indices data blocks sets...</td></tr>`;
-      
-      const fromLimit = new Date(document.getElementById('audit-filter-from').value);
-      const toLimit = new Date(document.getElementById('audit-filter-to').value);
-      toLimit.setHours(23,59,59,999);
+            try {
+                const formData = new FormData(formElement);
+                const queryParameters = new URLSearchParams();
+                queryParameters.append("action", actionMethod);
+                formData.forEach((value, key) => queryParameters.append(key, value));
 
-      const response = await networkCallTransportLayer("getGlobalTransactions", {});
-      if(response.success) {
-         const matchingSet = response.data.filter(row => {
-           let d = new Date(row.Date);
-           return d >= fromLimit && d <= toLimit;
-         });
-         
-         if(matchingSet.length === 0) {
-           tableBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic font-bold">Zero records archived mapping bounds timeline selection range.</td></tr>`;
-           return;
-         }
-         
-         let credits = 0, debits = 0, html = "";
-         matchingSet.forEach(tx => {
-           let amt = parseFloat(tx.Amount) || 0;
-           let classBadge = tx.Type === "Credit" ? "text-emerald-700 bg-emerald-50 px-1 border border-emerald-200 font-bold rounded" : "text-rose-700 bg-rose-50 px-1 border border-rose-200 font-bold rounded";
-           if(tx.Type === "Credit") credits += amt; else debits += amt;
-           
-           html += `<tr>
-             <td class="p-2 border border-slate-200 text-slate-500 text-[11px] font-bold">${tx.TransactionID}</td>
-             <td class="p-2 border border-slate-200 text-slate-500 text-[11px]">${new Date(tx.Date).toISOString().split('T')[0]}</td>
-             <td class="p-2 border border-slate-200 font-bold text-slate-800 text-[11px]">${tx.MembershipNo}</td>
-             <td class="p-2 border border-slate-200 text-slate-600 text-[11px]">${tx.AccountType}</td>
-             <td class="p-2 border border-slate-200 text-center"><span class="${classBadge}">${tx.Type.toUpperCase()}</span></td>
-             <td class="p-2 border border-slate-200 text-right font-black font-mono text-[11px] text-slate-900">₹${amt.toFixed(2)}</td>
-           </tr>`;
-         });
-         
-         document.getElementById('audit-total-credits').innerText = "₹" + credits.toLocaleString('en-IN', {minimumFractionDigits:2});
-         document.getElementById('audit-total-debits').innerText = "₹" + debits.toLocaleString('en-IN', {minimumFractionDigits:2});
-         document.getElementById('audit-net-liquidity').innerText = "₹" + (credits - debits).toLocaleString('en-IN', {minimumFractionDigits:2});
-         tableBody.innerHTML = html;
-      }
-    }
+                const response = await fetch(API_GATEWAY_URL, {
+                    method: 'POST',
+                    body: queryParameters,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
+                
+                const responseData = await response.json();
+                if(responseData.status === "success") {
+                    statusDiv.className = "status-msg text-sm font-semibold pt-2 text-center text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-100";
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-check mr-1.5"></i> ${responseData.message || 'Transaction committed into database rows.'}`;
+                    formElement.reset();
+                    
+                    // Clear tracking label names if they exist on the target reset forms
+                    const nestedNameLabel = formElement.querySelector('span[id$="-name"]');
+                    if(nestedNameLabel) nestedNameLabel.innerText = "";
+                } else {
+                    statusDiv.className = "status-msg text-sm font-semibold pt-2 text-center text-rose-600 bg-rose-50 p-3 rounded-lg border border-rose-100";
+                    statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Execution Error: ${responseData.message}`;
+                }
+            } catch(error) {
+                statusDiv.className = "status-msg text-sm font-semibold pt-2 text-center text-rose-600";
+                statusDiv.innerText = "Fatal network link interruption. Connection failed.";
+            } finally {
+                matchingButton.disabled = false;
+                if(matchingSpinner) matchingSpinner.classList.add('hidden');
+            }
+        }
 
-    async function dispatchMasterBankCreation(e) {
-      e.preventDefault();
-      const form = e.target;
-      const data = Object.fromEntries(new FormData(form).entries());
-      data["AccountID"] = "SB-" + Date.now().toString().slice(-4);
-      data["CurrentBalance"] = data.OpeningBalance;
-      
-      const res = await networkCallTransportLayer("addBank", data);
-      if(res.success) { alert("New Society corporate account pool provisioned safely."); form.reset(); triggerAsyncCacheRefreshSequence(); }
-    }
+        // 360 DEGREE GLOBAL INVESTIGATIVE SEARCH
+        async function execute360Search() {
+            const memberNumberInput = document.getElementById('search-member-no').value.trim();
+            const spinner = document.getElementById('search-spinner');
+            const displayResultsCard = document.getElementById('search-results');
+            
+            if(!memberNumberInput) return alert("Please specify a targeted member tracking code sequence.");
+            
+            spinner.classList.remove('hidden');
+            displayResultsCard.classList.add('hidden');
 
-    function dispatchNativePrintFrame(elementId) {
-      window.print();
-    }
+            try {
+                const fetchUrl = `${API_GATEWAY_URL}?action=searchMember&memberNo=${encodeURIComponent(memberNumberInput)}`;
+                const rawResponse = await fetch(fetchUrl);
+                const networkJSON = await rawResponse.json();
 
-    function invalidateSessionLogout() {
-      localActiveSessionToken = "";
-      location.reload();
-    }
-  </script>
+                if(networkJSON.status === "success") {
+                    const dataObj = networkJSON.data;
+                    
+                    // Build Identity Block 
+                    document.getElementById('res-m-no').innerText = dataObj.member.id;
+                    document.getElementById('res-m-name').innerText = dataObj.member.name;
+                    document.getElementById('res-m-phone').innerText = dataObj.member.phone;
+                    document.getElementById('res-m-aadhar').innerText = dataObj.member.aadhar;
+
+                    // Inject Ledger Accounts Lists
+                    buildEmbeddedTable(document.getElementById('res-savings-box'), ['Date', 'Type', 'Amount', 'Instrument'], dataObj.savings);
+                    buildEmbeddedTable(document.getElementById('res-fd-box'), ['FD Account ID', 'Principal Amount', 'Yield Rate', 'Maturity Forecast'], dataObj.fds);
+                    buildEmbeddedTable(document.getElementById('res-loan-box'), ['Loan Account ID', 'Principal Balance', 'Rate %', 'Inception Disbursal'], dataObj.loans);
+
+                    displayResultsCard.classList.remove('hidden');
+                } else {
+                    alert("No structured banking history indices trace back to criteria: " + networkJSON.message);
+                }
+            } catch(e) {
+                alert("Critical crash handling pipeline event triggered: " + e.message);
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function buildEmbeddedTable(containerElement, headerArray, datasetRows) {
+            if(!datasetRows || datasetRows.length === 0) {
+                containerElement.innerHTML = `<div class="p-8 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">No active accounts or ledger listings matches</div>`;
+                return;
+            }
+            let htmlString = `<table class="w-full text-left font-mono text-xs border-collapse">
+                <thead class="bg-slate-200 text-slate-700 sticky top-0"><tr>`;
+            headerArray.forEach(head => { htmlString += `<th class="p-2.5 border-b border-gray-300 font-bold">${head}</th>`; });
+            htmlString += `</tr></thead><tbody class="divide-y divide-gray-200 bg-white">`;
+            
+            datasetRows.forEach(row => {
+                htmlString += `<th class="p-2.5 text-slate-600 font-normal">`;
+                const propertiesList = Object.keys(row);
+                // Map values sequentially matching header capacity metrics limit
+                for(let idx = 0; idx < headerArray.length; idx++) {
+                    const dynamicValue = row[propertiesList[idx]] !== undefined ? row[propertiesList[idx]] : '-';
+                    if(idx === 0) {
+                        htmlString += `${dynamicValue}</th>`;
+                    } else {
+                        htmlString += `<td class="p-2.5 text-slate-600">${dynamicValue}</td>`;
+                    }
+                }
+                htmlString += `</tr>`;
+            });
+            htmlString += `</tbody></table>`;
+            containerElement.innerHTML = htmlString;
+        }
+
+        // CLIENT-SIDE EMI PREVIEW MATHEMATICAL MODEL (Flat Interest Calculation)
+        function previewEMISchedule() {
+            const principalAmt = parseFloat(document.getElementById('loan-p').value);
+            const rateYear = parseFloat(document.getElementById('loan-r').value);
+            const termMonths = parseInt(document.getElementById('loan-t').value);
+            const dateDisburs = document.getElementById('loan-d').value;
+            const tableBox = document.getElementById('emi-print-area');
+            const outerPane = document.getElementById('emi-schedule-pane');
+
+            if(!principalAmt || !rateYear || !termMonths || !dateDisburs) {
+                alert("Please fill in Principal, Interest, Tenure, and Disbursal Date to construct a matrix preview.");
+                return;
+            }
+
+            // Calculations based on the Apps Script backend logic (Flat Amortization Method)
+            const overallInterest = principalAmt * (rateYear / 100) * (termMonths / 12);
+            const aggregateRepayment = principalAmt + overallInterest;
+            const singleEMIAmount = Math.round((aggregateRepayment / termMonths) * 100) / 100;
+            const monthlyPrincipalComponent = Math.round((principalAmt / termMonths) * 100) / 100;
+            const monthlyInterestComponent = Math.round((overallInterest / termMonths) * 100) / 100;
+
+            let markup = `<div class="mb-4 text-xs border-b border-gray-200 pb-3 grid grid-cols-2 gap-2 text-slate-700">
+                <div><strong>Aggregate Asset Obligation:</strong> INR ${aggregateRepayment.toFixed(2)}</div>
+                <div><strong>Total Fixed Yield Interest:</strong> INR ${overallInterest.toFixed(2)}</div>
+                <div><strong>Standardized Periodic EMI:</strong> INR ${singleEMIAmount.toFixed(2)} / Month</div>
+                <div><strong>Total Installments:</strong> ${termMonths} Months</div>
+            </div>`;
+
+            markup += `<table class="w-full text-left border-collapse text-xs">
+                <thead><tr class="bg-slate-100 text-slate-700 font-bold border-b border-gray-300">
+                    <th class="p-1.5">Inst. #</th><th class="p-1.5">Target Due Date</th><th class="p-1.5">Principal Component</th><th class="p-1.5">Interest Component</th><th class="p-1.5">Total EMI Amount</th>
+                </tr></thead><tbody class="divide-y divide-gray-100">`;
+
+            let baseDate = new Date(dateDisburs);
+            for(let count = 1; count <= termMonths; count++) {
+                baseDate.setMonth(baseDate.getMonth() + 1);
+                const formatString = baseDate.toISOString().split('T')[0];
+                markup += `<tr>
+                    <td class="p-1.5 font-bold">${count}</td>
+                    <td class="p-1.5">${formatString}</td>
+                    <td class="p-1.5">${monthlyPrincipalComponent.toFixed(2)}</td>
+                    <td class="p-1.5">${monthlyInterestComponent.toFixed(2)}</td>
+                    <td class="p-1.5 font-bold text-slate-900">${singleEMIAmount.toFixed(2)}</td>
+                </tr>`;
+            }
+            markup += `</tbody></table>`;
+            tableBox.innerHTML = markup;
+            outerPane.classList.remove('hidden');
+        }
+
+        function printEmiMatrix() {
+            const printingContents = document.getElementById('emi-print-area').innerHTML;
+            const originalContents = document.body.innerHTML;
+            document.body.innerHTML = `<div style="padding:40px; font-family:monospace; background:white; color:black;">
+                <h2 style="margin-bottom:5px; text-transform:uppercase;">ECOFIN Credit Souhardha Co-op Society</h2>
+                <h3 style="margin-top:0; font-weight:normal; color:#555;">Official Loan Amortization & EMI Schedule</h3>
+                <hr style="border:1px solid #ccc; margin-bottom:20px;"/>
+                ${printingContents}
+            </div>`;
+            window.print();
+            document.body.innerHTML = originalContents;
+            window.location.reload(); // Refresh viewport bindings to restore operational states
+        }
+
+        // GENERAL LEDGER BALANCES AUDIT ENGINE ENGINE
+        async function triggerAuditCalculation() {
+            const spinner = document.getElementById('audit-spinner');
+            const viewbox = document.getElementById('audit-output-pane');
+            const printBox = document.getElementById('audit-print-container');
+            
+            spinner.classList.remove('hidden');
+            viewbox.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_GATEWAY_URL}?action=calculateAudit`);
+                const parsed = await response.json();
+
+                if(parsed.status === "success") {
+                    const data = parsed.data;
+                    let out = `<div class="text-center border-b border-gray-300 pb-4 mb-4">
+                        <h2 class="text-base font-bold tracking-wide uppercase text-slate-900">ECOFIN Credit Souhardha Financial Clearing House</h2>
+                        <h3 class="text-xs font-bold text-amber-600 uppercase tracking-widest mt-1">Institutional Audit Master Balance Sheet Ledger</h3>
+                        <p class="text-slate-500 text-[10px] mt-1 font-sans">Compiled on: ${new Date().toLocaleString()}</p>
+                    </div>`;
+
+                    // Consolidated Key Financial Indicators Row Grid
+                    out += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-900 text-white p-4 rounded-lg mb-6">
+                        <div><span class="text-slate-400 block text-[10px] uppercase">Institutional Liquid Cash</span><strong class="text-sm font-bold text-emerald-400">INR ${parseFloat(data.vaultCashBalance).toFixed(2)}</strong></div>
+                        <div><span class="text-slate-400 block text-[10px] uppercase">External Bank Deposits</span><strong class="text-sm font-bold text-blue-400">INR ${parseFloat(data.societyBankTotalBalance).toFixed(2)}</strong></div>
+                        <div><span class="text-slate-400 block text-[10px] uppercase">Aggregate Share Capital</span><strong class="text-sm font-bold text-amber-400">INR ${parseFloat(data.totalShareCapital).toFixed(2)}</strong></div>
+                        <div><span class="text-slate-400 block text-[10px] uppercase">Outstanding Loan Portfolio</span><strong class="text-sm font-bold text-rose-400">INR ${parseFloat(data.totalOutstandingLoans).toFixed(2)}</strong></div>
+                    </div>`;
+
+                    // Generate Dynamic Subsidiary Section Sub-tables
+                    out += renderAuditSubTable("Institutional Commercial Bank Accounts Registry Breakdown", ["Bank Name", "IFSC Code", "Account Routing Code", "Current Valuation Balance"], data.societyBankAccounts);
+                    out += renderAuditSubTable("Top Underwritten Member Share Capital Positions", ["Member ID", "Full Legal Name", "Aadhar Mapping Identification", "Aggregated Share Capital Balance"], data.memberSummaries);
+
+                    printBox.innerHTML = out;
+                    viewbox.classList.remove('hidden');
+                } else {
+                    alert("Auditing index generation aborted by target sheet node: " + parsed.message);
+                }
+            } catch(ex) {
+                alert("General Ledger compilation failure: " + ex.message);
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function renderAuditSubTable(title, headers, dataset) {
+            let tableMarkup = `<div class="space-y-2"><h4 class="font-bold text-xs text-slate-800 uppercase tracking-wider border-l-4 border-amber-500 pl-2">${title}</h4>`;
+            if(!dataset || dataset.length === 0) {
+                tableMarkup += `<div class="p-3 bg-gray-100 text-slate-400 italic text-center rounded border border-gray-200">No systematic indexing trace values tracked under row classifications.</div></div>`;
+                return tableMarkup;
+            }
+            tableMarkup += `<table class="w-full text-left border border-gray-200 font-mono text-[11px] mb-6">
+                <thead><tr class="bg-gray-100 text-slate-700 font-bold border-b border-gray-200">`;
+            headers.forEach(h => { tableMarkup += `<th class="p-2 border-r border-gray-200">${h}</th>`; });
+            tableMarkup += `</tr></thead><tbody class="divide-y divide-gray-200">`;
+            
+            dataset.forEach(row => {
+                tableMarkup += `<tr>`;
+                const objectKeys = Object.keys(row);
+                for(let counter = 0; counter < headers.length; counter++) {
+                    const printCellVal = row[objectKeys[counter]] !== undefined ? row[objectKeys[counter]] : '-';
+                    tableMarkup += `<td class="p-2 border-r border-gray-200 text-slate-600">${printCellVal}</td>`;
+                }
+                tableMarkup += `</tr>`;
+            });
+            tableMarkup += `</tbody></table></div>`;
+            return tableMarkup;
+        }
+
+        function printAuditReport() {
+            const printingContents = document.getElementById('audit-print-container').innerHTML;
+            if(!printingContents.trim()) return alert("Execute an operational ledger audit search sequence before firing printing triggers.");
+            const originalContents = document.body.innerHTML;
+            document.body.innerHTML = `<div style="padding:30px; font-family:monospace; background:white; color:black;">${printingContents}</div>`;
+            window.print();
+            document.body.innerHTML = originalContents;
+            window.location.reload();
+        }
+    </script>
 </body>
 </html>
