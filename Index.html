@@ -440,8 +440,8 @@
   </div>
 
   <script>
-    // CRITICAL PASTE ASSIGNMENT: Inject your Deployed Apps Script Web-App link inside this variable string node:
-    const ENDPOINT_GATEWAY = "YOUR_DEPLOYED_GOOGLE_APPS_SCRIPT_WEBAPP_URL";
+    // CRITICAL API INTEGRATION NODE: Linked safely to your deployed backend macro execution pipeline
+    const ENDPOINT_GATEWAY = "https://script.google.com/macros/s/AKfycbzAc93eKeJBtj9KdDF_Lyyc4fmCdbem8WOoR3wZEc0503Swoo9oT1-4G7jIvQzvJ2f_/exec";
 
     let localStateMembersCache = [];
     let localActiveSessionToken = "";
@@ -646,7 +646,7 @@
            simulationCalculatedSchedulesHolder.push({
              EMINo: i, DueDate: dueDateStr, EMIAmount: emiCalculatedConstantSum.toFixed(2),
              PrincipalComponent: standardPrincipalSplit.toFixed(2), InterestComponent: flatMonthlyInterestShare.toFixed(2)
-           });
+          });
            
            tableBodyHtml += `<tr><td class="p-1.5 border border-slate-200 font-bold">${i}</td><td class="p-1.5 border border-slate-200">${dueDateStr}</td><td class="p-1.5 border border-slate-200 font-bold">₹${emiCalculatedConstantSum.toFixed(2)}</td><td class="p-1.5 border border-slate-200 text-emerald-700">₹${standardPrincipalSplit.toFixed(2)}</td><td class="p-1.5 border border-slate-200 text-amber-700">₹${flatMonthlyInterestShare.toFixed(2)}</td><td class="p-1.5 border border-slate-200 font-bold">₹${Math.abs(balanceOutstanding).toFixed(2)}</td></tr>`;
          }
@@ -681,7 +681,6 @@
       const form = e.target;
       const data = Object.fromEntries(new FormData(form).entries());
       
-      // Inject internal cache generated array map payload data matrix inside payload object instantiation structure
       data["Schedules"] = simulationCalculatedSchedulesHolder;
       data["TotalInterest"] = (simulationCalculatedSchedulesHolder.reduce((acc, current) => acc + parseFloat(current.InterestComponent), 0)).toFixed(2);
       data["TotalRepayment"] = (parseFloat(data.LoanAmount) + parseFloat(data.TotalInterest)).toFixed(2);
@@ -694,8 +693,8 @@
     }
 
     async function retrieveSpecificLoanPendingEMISchedules(loanFileNoString) {
-      const cardElement = document.getElementById('emi-payment-execution-card');
-      if(!loanFileNoString) { cardElement.classList.add('hidden'); return; }
+      const card = document.getElementById('emi-payment-execution-card');
+      if(!loanFileNoString) { card.classList.add('hidden'); return; }
       
       const activeLoansSet = await networkCallTransportLayer("getLoans", {});
       activeLoanSelectedCacheRecordObj = activeLoansSet.data.find(l => l.LoanNo === loanFileNoString);
@@ -712,15 +711,14 @@
           document.getElementById('emi-lbl-amount').innerText = "₹" + parseFloat(sortedPendingInstallmentRowObj.EMIAmount).toFixed(2);
           document.getElementById('emi-lbl-split').innerText = "P: ₹" + sortedPendingInstallmentRowObj.PrincipalComponent + " | I: ₹" + sortedPendingInstallmentRowObj.InterestComponent;
           
-          // Preserve parameters tracking trace states pointers inside target DOM attribute spaces descriptors
-          cardElement.dataset.emiNo = sortedPendingInstallmentRowObj.EMINo;
-          cardElement.dataset.emiAmt = sortedPendingInstallmentRowObj.EMIAmount;
-          cardElement.dataset.emiPrincipal = sortedPendingInstallmentRowObj.PrincipalComponent;
+          card.dataset.emiNo = sortedPendingInstallmentRowObj.EMINo;
+          card.dataset.emiAmt = sortedPendingInstallmentRowObj.EMIAmount;
+          card.dataset.emiPrincipal = sortedPendingInstallmentRowObj.PrincipalComponent;
           
-          cardElement.classList.remove('hidden');
+          card.classList.remove('hidden');
         } else {
           alert("All processing steps cycles finalized or folder files references cleared metrics values layout.");
-          cardElement.classList.add('hidden');
+          card.classList.add('hidden');
         }
       }
     }
